@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use Paystack;
 use Illuminate\Http\Request;
 use App\Mail\RegVerificationMail;
 use Illuminate\Support\Facades\DB;
@@ -11,20 +12,30 @@ use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
-     /**
-     * Register new user
-     *
-     * @param $request Request
+    /**
+     * Redirect the User to Paystack Payment Page
+     * @return Url
      */
-    public function enroll(Request $request)
+    public function redirectToGateway()
+    {
+        return Paystack::getAuthorizationUrl()->redirectNow();
+    }
+    
+    /**
+     * Obtain Paystack payment information
+     * Register new user
+     * @return void
+     */
+    public function handleGatewayCallback(Request $request)
     {
         $this->validateRequest($request);
 
         $token = (str_random(6));
         $user_id = mt_rand(100, 999);    
         $password = (str_random(6));
-
         $default_avater = 'https://res.cloudinary.com/iro/image/upload/v1552487696/Backtick/noimage.png';
+
+        $paymentDetails = Paystack::getPaymentData();
 
         //start temporay transaction 
         DB::beginTransaction();
@@ -62,6 +73,7 @@ class RegisterController extends Controller
             $res['success'] = true;
             $res['message'] = "Registration Successful! A Confirmation Mail has been Sent to $user->email";
             $res['data'] = $user;            
+            $res['paymentDetails'] = $paymentDetails;            
 
             DB::commit();
 

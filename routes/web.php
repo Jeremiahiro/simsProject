@@ -20,3 +20,4 @@ Route::get('/', function () {
 });
 
 $router->post('/enroll', 'RegisterController@enroll');
+$router->get('/payment/callback', 'RegisterController@handleGatewayCallback');

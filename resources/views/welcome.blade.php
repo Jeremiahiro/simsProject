@@ -130,9 +130,10 @@
                         </div>
                     </div>
 
-                    {{-- <input type="hidden" name="amount" value="2500"> --}}
-                    {{-- <input type="hidden" name="metadata" value="2500"> --}}
-
+                    <input type="hidden" name="amount" value="2500">
+                    <input type="hidden" name="reference" value="{{ Paystack::genTranxRef() }}">
+                    <input type="hidden" name="key" value="{{ config('paystack.secretKey') }}">
+                    
                     <div class="form-group">
                         <button style="cursor:pointer" type="submit" class="btn btn-success btn-lg btn-block"
                             value="Enroll Now!">
